@@ -18,6 +18,7 @@
 
 			//	为登录按钮绑定事件，执行登录操作
 			$("#submitBtn").click(function () {
+
 				login();
 			})
 
@@ -53,7 +54,7 @@
 				},
 				type:"post",
 				dataType:"json",
-				sussess:function (data) {
+				success:function (data) {
 
 					/*返回给前端的data
 					data
@@ -68,7 +69,7 @@
 						window.location.href="http://localhost:8080/crm/workbench/index.html";
 					}
 					else{
-						$("#msg").html("data.msg");
+						$("#msg").html(data.msg);
 					}
 
 				}
@@ -105,7 +106,7 @@
 					</div>
 					<div class="checkbox"  style="position: relative;top: 30px; left: 10px;">
 						
-							<span id="msg" style="color: red">123</span>
+							<span id="msg" style="color: red"></span>
 						
 					</div>
 

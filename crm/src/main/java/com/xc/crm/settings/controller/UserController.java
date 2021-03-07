@@ -16,12 +16,13 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-@WebServlet(name = "UserController",urlPatterns = "/settings/user/login.do")
+//@WebServlet(name = "UserController",urlPatterns = "/settings/user/login.do")
 public class UserController extends HttpServlet {
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         String path=request.getServletPath();//取到url-patterns的路径
+        System.out.println(path+"这是path ");
         if("/settings/user/login.do".equals(path))
         {
             //执行login方法
