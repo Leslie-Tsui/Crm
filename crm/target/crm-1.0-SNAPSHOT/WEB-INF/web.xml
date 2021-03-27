@@ -13,6 +13,19 @@
    <url-pattern>*.do</url-pattern>
  </filter-mapping>
 
+    <filter>
+        <filter-name>LoginFilter</filter-name>
+        <filter-class>com.xc.crm.web.filter.LoginFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>LoginFilter</filter-name>
+        <url-pattern>*.do</url-pattern>
+        <url-pattern>*.jsp</url-pattern>
+        <!-- <url-pattern>/*</url-pattern> 过滤器中还要排除过滤login.jsp和login.do-->
+    </filter-mapping>
+
+
+
   <servlet>
     <servlet-name>UserController</servlet-name>
     <servlet-class>com.xc.crm.settings.controller.UserController</servlet-class>
