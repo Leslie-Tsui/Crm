@@ -36,7 +36,7 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 		});
 		
 		
-		window.open("workbench/main/index.jsp","workareaFrame");
+		window.open("workbench/main/index.html","workareaFrame");
 		
 	});
 	
@@ -146,7 +146,6 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 						<!--这里是当前的登录用户-->
 						<span class="glyphicon glyphicon-user"></span>${sessionScope.user.name} <span class="caret"></span>
 							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-
 						<%--EL表达式
 						pageScope
 

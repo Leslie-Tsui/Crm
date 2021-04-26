@@ -9,7 +9,7 @@
   <typeAliases>
   
   	<package name="com.xc.crm.settings.domain"/>
-
+    <package name="com.xc.crm.workbench.domain"/>
   </typeAliases>
   
   <environments default="development">
@@ -26,6 +26,7 @@
 
   <mappers>
     <package name="com.xc.crm.settings.dao"/>
+    <package name="com.xc.crm.workbench.dao"/>
   </mappers>
 </configuration>
 

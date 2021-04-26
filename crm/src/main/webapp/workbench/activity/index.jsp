@@ -19,12 +19,130 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 <script type="text/javascript">
 
 	$(function(){
-		
-		
-		
+
+
+
 	});
-	
+
 </script>
+
+<script type="text/javascript">
+$(function (){
+//	addBtn按钮的绑定事件，打开添加市场活动操作的模态窗口
+
+	$("#addBtn").click(function (){
+
+
+		$(".time").datetimepicker({
+			language:"zh-CN",
+			format: 'yyyy-mm-dd hh:ii',
+			minView:"hour",
+			initData: new Date(),
+			autoclose:true,
+			todayBtn:true,
+			clearBtn:true,
+			pickerPosition:"bottom-left"
+
+		});
+
+		//为保存按钮绑定时间，执行添加操作
+		$("#saveBtn").click(function () {
+
+$.ajax(
+		{
+			url:"workbench/activity/save.do",
+			data:{
+
+				owner:$.trim($("#create-owner")),
+				name:$.trim($("#create-name")),
+				startDate:$.trim($("#create-startDate")),
+				endDate:$.trim($("#create-endDate")),
+				cost:$.trim($("#create-cost")),
+				description:$.trim($("#create-description")),
+
+
+			},
+			type: "post",
+			dataType: "json",
+			success:function (data){
+			if (data.success()){
+			//添加成功后，刷新市场活动信息列表（只要刷新这个列表控件就行，局部刷新）
+			//关闭添加操作的模态窗口
+				$("#createActivityModal").modal("hide");
+			}
+
+			else {
+
+				alert("添加市场活动失败");
+
+			}
+
+
+			}
+
+		}
+)
+
+
+		});
+
+
+
+		/*
+		* 操作模态窗口的方式：
+		* 	1.找到需要操作的模态窗口的jQuery对象，调用modal方法，为该方法传递参数  (show:打开模态窗口/hide:关闭模态窗口)
+		*
+		* */
+
+	//	去后台，读取下拉表的内容,用Ajax的方法，简单
+		$.ajax({
+			url:"workbench/activity/getUserList.do",
+			/*
+			data属性不需要了，因为这个表单不需要提交参数
+			data:{
+				"loginAct":loginAct,
+				"loginPwd":loginPwd
+			},*/
+
+			//添加修改删除用post，登录与密码相关的参数用post，其他正常取值使用get
+			type:"get",
+		dataType:"json",
+		success:function (data){
+		/*
+			返回的数据肯定是这种User的列表，List<User> uList。但是要传给前端，需要翻译成json的形式传
+		* 	data
+		*		[{"id":1,"name":徐昌,"loginAct":123},{用户2},{用户3},{用户4}....]
+		* */
+			var html="<option></option>";
+			//遍历出来的每一个n，就是每一个user对象
+			$.each(data,function (i,n){
+
+				html+="<option value='"+n.id+"'>"+n.name+"</option>";
+
+			})
+
+			$("#create-owner").html(html);
+
+		//	将当前登录的用户，设置为下拉默认的选项
+		//	在js中使用el表达式，el表达式一定要套用在字符串中
+			var id ="${sessionScope.user.id}"
+			$("#create-owner").val(id);
+
+
+
+
+
+		//	所有者下拉框处理完毕后，打开模态窗口
+			$("#createActivityModal").modal("show");
+		}
+		})
+
+	});
+
+});
+
+</script>
+
 </head>
 <body>
 
@@ -43,12 +161,12 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 					<form class="form-horizontal" role="form">
 					
 						<div class="form-group">
-							<label for="create-marketActivityOwner" class="col-sm-2 control-label">所有者<span style="font-size: 15px; color: red;">*</span></label>
+							<label for="create-owner" class="col-sm-2 control-label">所有者<span style="font-size: 15px; color: red;">*</span></label>
 							<div class="col-sm-10" style="width: 300px;">
-								<select class="form-control" id="create-marketActivityOwner">
-								  <option>zhangsan</option>
-								  <option>lisi</option>
-								  <option>wangwu</option>
+								<select class="form-control" id="create-owner">
+<%--								  <option>zhangsan</option>--%>
+<%--								  <option>lisi</option>--%>
+<%--								  <option>wangwu</option>--%>
 								</select>
 							</div>
                             <label for="create-marketActivityName" class="col-sm-2 control-label">名称<span style="font-size: 15px; color: red;">*</span></label>
@@ -58,13 +176,14 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 						</div>
 						
 						<div class="form-group">
-							<label for="create-startTime" class="col-sm-2 control-label">开始日期</label>
+							<label for="create-startDate" class="col-sm-2 control-label">开始日期</label>
+
 							<div class="col-sm-10" style="width: 300px;">
-								<input type="text" class="form-control" id="create-startTime">
+								<input type="text" class="form-control time" id="create-startDate" readonly>
 							</div>
-							<label for="create-endTime" class="col-sm-2 control-label">结束日期</label>
+							<label for="create-endDate" class="col-sm-2 control-label">结束日期</label>
 							<div class="col-sm-10" style="width: 300px;">
-								<input type="text" class="form-control" id="create-endTime">
+								<input type="text" class="form-control time" id="create-endDate" readonly>
 							</div>
 						</div>
                         <div class="form-group">
@@ -75,9 +194,9 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
                             </div>
                         </div>
 						<div class="form-group">
-							<label for="create-describe" class="col-sm-2 control-label">描述</label>
+							<label for="create-description" class="col-sm-2 control-label">描述</label>
 							<div class="col-sm-10" style="width: 81%;">
-								<textarea class="form-control" rows="3" id="create-describe"></textarea>
+								<textarea class="form-control" rows="3" id="create-description"></textarea>
 							</div>
 						</div>
 						
@@ -85,8 +204,9 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 					
 				</div>
 				<div class="modal-footer">
+
 					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-					<button type="button" class="btn btn-primary" data-dismiss="modal">保存</button>
+					<button type="button" class="btn btn-primary" id="saveBtn">保存</button>
 				</div>
 			</div>
 		</div>
@@ -107,12 +227,12 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 					<form class="form-horizontal" role="form">
 					
 						<div class="form-group">
-							<label for="edit-marketActivityOwner" class="col-sm-2 control-label">所有者<span style="font-size: 15px; color: red;">*</span></label>
+							<label for="edit-owner" class="col-sm-2 control-label">所有者<span style="font-size: 15px; color: red;">*</span></label>
 							<div class="col-sm-10" style="width: 300px;">
-								<select class="form-control" id="edit-marketActivityOwner">
-								  <option>zhangsan</option>
-								  <option>lisi</option>
-								  <option>wangwu</option>
+								<select class="form-control" id="edit-owner">
+<%--								  <option>zhangsan</option>--%>
+<%--								  <option>lisi</option>--%>
+<%--								  <option>wangwu</option>--%>
 								</select>
 							</div>
                             <label for="edit-marketActivityName" class="col-sm-2 control-label">名称<span style="font-size: 15px; color: red;">*</span></label>
@@ -207,7 +327,17 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 			</div>
 			<div class="btn-toolbar" role="toolbar" style="background-color: #F7F7F7; height: 50px; position: relative;top: 5px;">
 				<div class="btn-group" style="position: relative; top: 18%;">
-				  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createActivityModal"><span class="glyphicon glyphicon-plus"></span> 创建</button>
+					<%--
+					点击创建按钮，观察两个属性和属性值
+					data-toggle="modal";
+					表示触发该按钮，将要打开一个模态窗口，data-target="#createActivityModal"说明了打开id为createActivityModal的模态窗口
+
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createActivityModal"><span class="glyphicon glyphicon-plus"></span> 创建</button>
+但是这种写法是以属性和属性值的方式写在了button元素中，用来打开模态窗口，现在这样做的问题是没有办法对按钮的功能进行扩充。所以对于未来的触发模态窗口操作，一定不要写死在元素当中，而应该由我们自己写js代码来操作
+					--%>
+
+
+				  <button type="button" class="btn btn-primary" id="addBtn"><span class="glyphicon glyphicon-plus"></span> 创建</button>
 				  <button type="button" class="btn btn-default" data-toggle="modal" data-target="#editActivityModal"><span class="glyphicon glyphicon-pencil"></span> 修改</button>
 				  <button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-minus"></span> 删除</button>
 				</div>

@@ -8,6 +8,7 @@ import com.xc.crm.utils.DateTimeUtil;
 import com.xc.crm.utils.SqlSessionUtil;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class UserServiceImpl implements UserService {
@@ -25,14 +26,12 @@ public class UserServiceImpl implements UserService {
 
         if(user==null){
             throw new LoginException("账号密码错误");
-
         }
 
 //            验证失效时间
         String expireTime=user.getExpireTime();
         String currentTime= DateTimeUtil.getSysTime();
         if(expireTime.compareTo(currentTime)<0){
-
             throw new LoginException("账号已失效");
         }
 
@@ -48,5 +47,11 @@ public class UserServiceImpl implements UserService {
         }
 
         return user;
+    }
+
+    @Override
+    public List<User> getUserList() {
+    List<User> userList=userDao.getUserList();
+        return userList;
     }
 }
